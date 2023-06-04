@@ -1,0 +1,433 @@
+<aside>
+💡 **1**
+
+A permutation perm of n + 1 integers of all the integers in the range [0, n] can be represented as a string s of length n where:
+
+- s[i] == 'I' if perm[i] < perm[i + 1], and
+- s[i] == 'D' if perm[i] > perm[i + 1].
+
+Given a string s, reconstruct the permutation perm and return it. If there are multiple valid permutations perm, return **any of them**.
+
+**Example 1:**
+
+**Input:** s = "IDID"
+
+**Output:**
+
+[0,4,1,3,2]
+ans-:
+public class PermutationReconstructor {
+    public int[] findPermutation(String s) {
+        int n = s.length();
+        int[] perm = new int[n + 1];
+        int low = 0, high = n;
+
+        for (int i = 0; i < n; i++) {
+            if (s.charAt(i) == 'I') {
+                perm[i] = low;
+                low++;
+            } else if (s.charAt(i) == 'D') {
+                perm[i] = high;
+                high--;
+            }
+        }
+
+        perm[n] = low;
+
+        return perm;
+    }
+
+    public static void main(String[] args) {
+        PermutationReconstructor reconstructor = new PermutationReconstructor();
+        String s = "IDID";
+        int[] permutation = reconstructor.findPermutation(s);
+        System.out.println(Arrays.toString(permutation));
+    }
+}
+<aside>
+💡 **2**
+
+You are given an m x n integer matrix matrix with the following two properties:
+
+- Each row is sorted in non-decreasing order.
+- The first integer of each row is greater than the last integer of the previous row.
+
+Given an integer target, return true *if* target *is in* matrix *or* false *otherwise*.
+
+You must write a solution in O(log(m * n)) time complexity.
+
+**Input:** matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3
+
+**Output:** true
+
+ans-:
+public class MatrixSearch {
+
+    public static boolean searchMatrix(int[][] matrix, int target) {
+        int m = matrix.length;
+        int n = matrix[0].length;
+        int low = 0;
+        int high = m * n - 1;
+
+        while (low <= high) {
+            int mid = (low + high) / 2;
+            int row = mid / n;
+            int col = mid % n;
+            if (matrix[row][col] == target) {
+                return true;
+            } else if (matrix[row][col] < target) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+
+        return false;
+    }
+
+    public static void main(String[] args) {
+        int[][] matrix = {{1, 3, 5, 7}, {10, 11, 16, 20}, {23, 30, 34, 60}};
+        int target = 3;
+        System.out.println(searchMatrix(matrix, target)); // Output: true
+    }
+}
+<aside>
+💡 **3**
+
+Given an array of integers arr, return *true if and only if it is a valid mountain array*.
+
+Recall that arr is a mountain array if and only if:
+
+- arr.length >= 3
+- There exists some i with 0 < i < arr.length - 1 such that:
+    - arr[0] < arr[1] < ... < arr[i - 1] < arr[i]
+    - arr[i] > arr[i + 1] > ... > arr[arr.length - 1]
+**Example 1:**
+
+**Input:** arr = [2,1]
+
+**Output:**
+
+false
+ans-:
+public class MountainArray {
+    public static boolean validMountainArray(int[] arr) {
+        int n = arr.length;
+        
+        // Check if the array length is less than 3
+        if (n < 3) {
+            return false;
+        }
+        
+        int i = 0;
+        
+        // Check for increasing sequence
+        while (i < n - 1 && arr[i] < arr[i + 1]) {
+            i++;
+        }
+        
+        // Check if the peak is at the first or last index
+        if (i == 0 || i == n - 1) {
+            return false;
+        }
+        
+        // Check for decreasing sequence
+        while (i < n - 1 && arr[i] > arr[i + 1]) {
+            i++;
+        }
+        
+        // If i reaches the end of the array, it's a valid mountain array
+        return i == n - 1;
+    }
+    
+    public static void main(String[] args) {
+        int[] arr = {2, 1};
+        System.out.println(validMountainArray(arr)); // Output: false
+    }
+}
+<aside>
+💡 **4**
+
+Given a binary array nums, return *the maximum length of a contiguous subarray with an equal number of* 0 *and* 1.
+
+**Example 1:**
+
+**Input:** nums = [0,1]
+
+**Output:** 2
+
+**Explanation:**
+
+[0, 1] is the longest contiguous subarray with an equal number of 0 and 1.
+
+ans-:
+import java.util.HashMap;
+import java.util.Map;
+
+public class ContiguousArray {
+    public static int findMaxLength(int[] nums) {
+        int maxLength = 0;
+        int count = 0;
+        Map<Integer, Integer> countMap = new HashMap<>();
+        
+        // Initialize the countMap with an initial count of 0 at index -1
+        countMap.put(0, -1);
+        
+        for (int i = 0; i < nums.length; i++) {
+            // Increment the count by 1 if nums[i] is 1, otherwise decrement it by 1
+            count += nums[i] == 1 ? 1 : -1;
+            
+            if (countMap.containsKey(count)) {
+                // If the count is already present in the map, update the maxLength
+                maxLength = Math.max(maxLength, i - countMap.get(count));
+            } else {
+                // If the count is not present in the map, add it with the current index
+                countMap.put(count, i);
+            }
+        }
+        
+        return maxLength;
+    }
+    
+    public static void main(String[] args) {
+        int[] nums = {0, 1};
+        System.out.println(findMaxLength(nums)); // Output: 2
+    }
+}
+<aside>
+💡 **5**
+
+The **product sum** of two equal-length arrays a and b is equal to the sum of a[i] * b[i] for all 0 <= i < a.length (**0-indexed**).
+
+- For example, if a = [1,2,3,4] and b = [5,2,3,1], the **product sum** would be 1*5 + 2*2 + 3*3 + 4*1 = 22.
+
+Given two arrays nums1 and nums2 of length n, return *the **minimum product sum** if you are allowed to **rearrange** the **order** of the elements in* nums1.
+
+**Example 1:**
+
+**Input:** nums1 = [5,3,4,2], nums2 = [4,2,2,5]
+
+**Output:** 40
+
+**Explanation:**
+
+We can rearrange nums1 to become [3,5,4,2]. The product sum of [3,5,4,2] and [4,2,2,5] is 3*4 + 5*2 + 4*2 + 2*5 = 40.
+
+ans-:
+import java.util.Arrays;
+
+public class MinimumProductSum {
+    public static int minProductSum(int[] nums1, int[] nums2) {
+        int n = nums1.length;
+        
+        // Sort the arrays in ascending order
+        Arrays.sort(nums1);
+        Arrays.sort(nums2);
+        
+        int minProductSum = 0;
+        
+        // Calculate the product sum of corresponding elements from both arrays
+        for (int i = 0; i < n; i++) {
+            minProductSum += nums1[i] * nums2[n - i - 1];
+        }
+        
+        return minProductSum;
+    }
+    
+    public static void main(String[] args) {
+        int[] nums1 = {5, 3, 4, 2};
+        int[] nums2 = {4, 2, 2, 5};
+        System.out.println(minProductSum(nums1, nums2)); // Output: 40
+    }
+}
+<aside>
+💡 **6**
+
+An integer array original is transformed into a **doubled** array changed by appending **twice the value** of every element in original, and then randomly **shuffling** the resulting array.
+
+Given an array changed, return original *if* changed *is a **doubled** array. If* changed *is not a **doubled** array, return an empty array. The elements in* original *may be returned in **any** order*.
+
+**Example 1:**
+
+**Input:** changed = [1,3,4,2,6,8]
+
+**Output:** [1,3,4]
+
+**Explanation:** One possible original array could be [1,3,4]:
+
+- Twice the value of 1 is 1 * 2 = 2.
+- Twice the value of 3 is 3 * 2 = 6.
+- Twice the value of 4 is 4 * 2 = 8.
+
+Other original arrays could be [4,3,1] or [3,1,4].
+
+ans-:
+import java.util.*;
+
+public class DoubledArray {
+    public static int[] findOriginalArray(int[] changed) {
+        int n = changed.length;
+        
+        // Check if the length of the changed array is odd
+        if (n % 2 != 0) {
+            return new int[0];
+        }
+        
+        Map<Integer, Integer> countMap = new HashMap<>();
+        
+        // Count the occurrences of each element in the changed array
+        for (int num : changed) {
+            countMap.put(num, countMap.getOrDefault(num, 0) + 1);
+        }
+        
+        // Sort the array in ascending order
+        Arrays.sort(changed);
+        
+        List<Integer> originalList = new ArrayList<>();
+        
+        // Traverse the changed array
+        for (int num : changed) {
+            if (countMap.getOrDefault(num, 0) == 0) {
+                // Skip if the current element is already used
+                continue;
+            }
+            
+            // Get the double of the current element
+            int doubledNum = 2 * num;
+            
+            if (countMap.getOrDefault(num, 0) > 0 && countMap.getOrDefault(doubledNum, 0) > 0) {
+                // If both num and doubledNum are available, add num to the original list
+                originalList.add(num);
+                countMap.put(num, countMap.get(num) - 1);
+                countMap.put(doubledNum, countMap.get(doubledNum) - 1);
+            } else {
+                // If the required element is not available, return an empty array
+                return new int[0];
+            }
+        }
+        
+        // Convert the original list to an array
+        int[] original = new int[originalList.size()];
+        for (int i = 0; i < originalList.size(); i++) {
+            original[i] = originalList.get(i);
+        }
+        
+        return original;
+    }
+    
+    public static void main(String[] args) {
+        int[] changed = {1, 3, 4, 2, 6, 8};
+        int[] original = findOriginalArray(changed);
+        System.out.println(Arrays.toString(original)); // Output: [1, 3, 4]
+    }
+}
+<aside>
+💡 **7**
+
+Given a positive integer n, generate an n x n matrix filled with elements from 1 to n2 in spiral order.
+
+**Input:** n = 3
+
+**Output:** [[1,2,3],[8,9,4],[7,6,5]]
+ans-:
+import java.util.Arrays;
+
+public class SpiralMatrix {
+    public static int[][] generateMatrix(int n) {
+        int[][] matrix = new int[n][n];
+        int num = 1; // Start with the number 1
+        int rowStart = 0, rowEnd = n - 1;
+        int colStart = 0, colEnd = n - 1;
+        
+        while (rowStart <= rowEnd && colStart <= colEnd) {
+            // Fill the top row from left to right
+            for (int i = colStart; i <= colEnd; i++) {
+                matrix[rowStart][i] = num++;
+            }
+            rowStart++;
+            
+            // Fill the right column from top to bottom
+            for (int i = rowStart; i <= rowEnd; i++) {
+                matrix[i][colEnd] = num++;
+            }
+            colEnd--;
+            
+            if (rowStart <= rowEnd) {
+                // Fill the bottom row from right to left
+                for (int i = colEnd; i >= colStart; i--) {
+                    matrix[rowEnd][i] = num++;
+                }
+                rowEnd--;
+            }
+            
+            if (colStart <= colEnd) {
+                // Fill the left column from bottom to top
+                for (int i = rowEnd; i >= rowStart; i--) {
+                    matrix[i][colStart] = num++;
+                }
+                colStart++;
+            }
+        }
+        
+        return matrix;
+    }
+    
+    public static void main(String[] args) {
+        int n = 3;
+        int[][] matrix = generateMatrix(n);
+        for (int[] row : matrix) {
+            System.out.println(Arrays.toString(row));
+        }
+        /* Output:
+           [1, 2, 3]
+           [8, 9, 4]
+           [7, 6, 5]
+        */
+    }
+}
+8.Given two sparse matrices mat1 of size m x k and mat2 of size k x n, return the result of mat1 x mat2. You may assume that multiplication is always possible.
+**Input:** mat1 = [[1,0,0],[-1,0,3]], mat2 = [[7,0,0],[0,0,0],[0,0,1]]
+
+**Output:**
+
+[[7,0,0],[-7,0,3]]
+ans-:
+public class SparseMatrixMultiplication {
+    public static int[][] multiply(int[][] mat1, int[][] mat2) {
+        int m = mat1.length; // Number of rows in mat1
+        int k = mat1[0].length; // Number of columns in mat1
+        int n = mat2[0].length; // Number of columns in mat2
+        
+        int[][] result = new int[m][n];
+        
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                for (int x = 0; x < k; x++) {
+                    result[i][j] += mat1[i][x] * mat2[x][j];
+                }
+            }
+        }
+        
+        return result;
+    }
+    
+    public static void main(String[] args) {
+        int[][] mat1 = {{1, 0, 0}, {-1, 0, 3}};
+        int[][] mat2 = {{7, 0, 0}, {0, 0, 0}, {0, 0, 1}};
+        
+        int[][] result = multiply(mat1, mat2);
+        
+        // Print the result
+        for (int[] row : result) {
+            for (int num : row) {
+                System.out.print(num + " ");
+            }
+            System.out.println();
+        }
+        /* Output:
+           7 0 0
+           -7 0 3
+        */
+    }
+}
+
